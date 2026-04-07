@@ -3,7 +3,7 @@ import time
 from client import Client
 
 
-NUM_CLIENTS = 20
+NUM_CLIENTS = 10
 
 def run_single_client(client_id):
     print(f"Starting Client {client_id}")

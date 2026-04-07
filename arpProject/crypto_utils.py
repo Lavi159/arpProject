@@ -27,18 +27,21 @@ class Crypto_utils:
         length = len(ciphertext).to_bytes(4, 'big')
         sock.sendall(length + ciphertext)
     
-    def recv_framed(self, sock):
-        length_data = sock.recv(4)
-        if not length_data:
-            return None
-        length = int.from_bytes(length_data, 'big')
-        data = b''
-        while len(data) < length:
-            chunk = sock.recv(length - len(data))
+    def _recv_exact(self, sock, n: int):
+        data = b""
+        while len(data) < n:
+            chunk = sock.recv(n - len(data))
             if not chunk:
                 return None
             data += chunk
         return data
+
+    def recv_framed(self, sock):
+        length_data = self._recv_exact(sock, 4)
+        if not length_data:
+            return None
+        length = int.from_bytes(length_data, "big")
+        return self._recv_exact(sock, length)
     
     def load_key(self,path):
         with open(path, "rb") as f:
